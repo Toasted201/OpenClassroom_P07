@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Hateoas\Representation\PaginatedRepresentation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductController extends AbstractController
 {
@@ -23,9 +25,24 @@ class ProductController extends AbstractController
     /**
      * @Route("/products", name="product_list", methods={"GET"})
      */
-    public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository)
+    public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository, Request $request)
     {
-        $products = $productRepository->findAll();
-        return new JsonResponse($serializer->serialize($products, 'json'),200,[],true);
+        $limit = $request->query->get('limit', 10);
+        $page=$request->query->get('page', 1);
+        $offset = ($page - 1) * $limit;
+        $numberOfPages = (int) ceil($productRepository->count([]) / $limit);
+
+        $products = $productRepository->findBy([], ['id' => 'asc'], $limit, $offset);
+              
+        $paginated = new PaginatedRepresentation(
+            $products,
+            'product_list',
+            [],
+            $page,
+            $limit,
+            $numberOfPages
+        );
+
+        return new JsonResponse($serializer->serialize($paginated, 'json'),200,[],true);
     }
 }
