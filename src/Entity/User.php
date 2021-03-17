@@ -18,6 +18,14 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          absolute = true
  *      )
  * )
+ * @Hateoas\Relation(
+ *      "delete",
+ *      href = @Hateoas\Route(
+ *          "user_delete",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
  */
 class User
 {
