@@ -27,8 +27,8 @@ class ProductController extends AbstractController
      */
     public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository, Request $request) : JsonResponse
     {
-        $limit = $request->query->get('limit', 10);
-        $page = $request->query->get('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($productRepository->count([]) / $limit);
 

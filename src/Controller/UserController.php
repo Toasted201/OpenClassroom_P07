@@ -30,8 +30,8 @@ class UserController extends AbstractController
      */
     public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request) : JsonResponse
     {
-        $limit = $request->query->get('limit', 10);
-        $page = $request->query->get('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($userRepository->count([]) / $limit);
 
