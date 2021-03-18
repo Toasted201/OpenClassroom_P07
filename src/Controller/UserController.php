@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserFormType;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +12,7 @@ use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -56,29 +56,37 @@ class UserController extends AbstractController
         SerializerInterface $serializer,
         Request $request,
         EntityManagerInterface $entityManager,
-        ClientRepository $clientRepository
+        ClientRepository $clientRepository,
+        ValidatorInterface $validator
     ) : JsonResponse
     {
         $data = [];
         $data = $serializer->deserialize($request->getContent(), 'array', 'json');
 
         $user = new User();
-        $userForm = $this->createForm(UserFormType::class, $user);
-        $userForm->submit($data);
 
+        $user->setFirstName($data['first_name'])
+            ->setLastName($data['last_name'])
+            ->setEmail($data['email']);
         //J'associe le client n°1 pour les tests
         //TODO : associer le client authentifié
         $user->setClient($clientRepository->find(1));
 
-        if ($userForm->isValid()) {
+        $violations = $validator->validate($user);
+
+        if (count($violations) > 0) {
+            $message = [];
+            foreach ($violations as $violation) {              
+                $message[] = sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
+            }
+            return new JsonResponse($serializer->serialize($message, 'json'), 422, [], true);
+        } 
+        
+        if (count($violations) == 0) {       
             $entityManager->persist($user);
             $entityManager->flush();
-        } else {
-            var_dump($userForm->getErrors(true));
-            die;
+            return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
         }
-
-        return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
     }
 
     /**

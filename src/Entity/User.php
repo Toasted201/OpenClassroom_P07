@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email")
  * @Serializer\ExclusionPolicy("ALL")
  * @Hateoas\Relation(
  *      "self",
@@ -39,18 +42,30 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *  min = 2,
+     *  max = 255
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *  min = 2,
+     *  max = 255
+     * )
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Assert\NotBlank
+     * @Assert\Email
      */
     private $email;
 
