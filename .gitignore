@@ -13,3 +13,5 @@
 /.phpcs-cache
 /phpcs.xml
 ###< squizlabs/php_codesniffer ###
+workspace.code-workspace
+phpcs.xml.dist

@@ -16,7 +16,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/products/{id}", name="product_show", methods={"GET"})
      */
-    public function showProduct(Product $product, SerializerInterface $serializer)
+    public function showProduct(Product $product, SerializerInterface $serializer) : JsonResponse
     {
         return new JsonResponse($serializer->serialize($product, 'json'), 200, [], true);
     }
@@ -25,7 +25,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/products", name="product_list", methods={"GET"})
      */
-    public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository, Request $request)
+    public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository, Request $request) : JsonResponse
     {
         $limit = $request->query->get('limit', 10);
         $page = $request->query->get('page', 1);

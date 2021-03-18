@@ -28,7 +28,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request)
+    public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request) : JsonResponse
     {
         $limit = $request->query->get('limit', 10);
         $page = $request->query->get('page', 1);
@@ -57,7 +57,8 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ClientRepository $clientRepository
-    ) {
+    ) : JsonResponse
+    {
         $data = [];
         $data = $serializer->deserialize($request->getContent(), 'array', 'json');
 
@@ -83,7 +84,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}", name="user_delete", methods={"DELETE"})
      */
-    public function deleteUser(User $user, EntityManagerInterface $entityManager)
+    public function deleteUser(User $user, EntityManagerInterface $entityManager) : JsonResponse
     {
         $entityManager->remove($user);
         $entityManager->flush();
