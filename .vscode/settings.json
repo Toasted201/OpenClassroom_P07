@@ -1,0 +1,6 @@
+{
+    "phpsab.snifferMode": "onType",
+    "phpsab.debug": true,
+    "phpsab.snifferShowSources": true,
+    "phpsab.snifferEnable": true
+}

@@ -17,23 +17,23 @@ class ProductController extends AbstractController
      * @Route("/products/{id}", name="product_show", methods={"GET"})
      */
     public function showProduct(Product $product, SerializerInterface $serializer)
-    {       
-        return new JsonResponse($serializer->serialize($product, 'json'),200,[],true);
+    {
+        return new JsonResponse($serializer->serialize($product, 'json'), 200, [], true);
     }
 
-    
+
     /**
      * @Route("/products", name="product_list", methods={"GET"})
      */
     public function listProduct(SerializerInterface $serializer, ProductRepository $productRepository, Request $request)
     {
         $limit = $request->query->get('limit', 10);
-        $page=$request->query->get('page', 1);
+        $page = $request->query->get('page', 1);
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($productRepository->count([]) / $limit);
 
         $products = $productRepository->findBy([], ['id' => 'asc'], $limit, $offset);
-              
+
         $paginated = new PaginatedRepresentation(
             $products,
             'product_list',
@@ -43,6 +43,6 @@ class ProductController extends AbstractController
             $numberOfPages
         );
 
-        return new JsonResponse($serializer->serialize($paginated, 'json'),200,[],true);
+        return new JsonResponse($serializer->serialize($paginated, 'json'), 200, [], true);
     }
 }

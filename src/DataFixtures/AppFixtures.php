@@ -12,10 +12,10 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        
+
         //ajout des produits
-        $productsData=[];
-        $productsData=[
+        $productsData = [];
+        $productsData = [
             ['reference' => 'SM-A515FZBVEUB',
             'designation' => 'Galaxy A51',
             'brand' => 'Samsung',
@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
             'priceExclTax' => '985.26']
         ];
 
-        foreach ($productsData as $productData){
+        foreach ($productsData as $productData) {
             $product = new Product();
             $product->setReference($productData['reference'])
                 ->setDesignation($productData['designation'])
@@ -43,13 +43,13 @@ class AppFixtures extends Fixture
         $manager->flush();
 
         //ajout des clients
-        $clientsData=[];
-        $clientsData=[
+        $clientsData = [];
+        $clientsData = [
             ['title' => 'BestOfTel'],
             ['title' => 'ThereIsTel'],
         ];
 
-        foreach ($clientsData as $clientData){
+        foreach ($clientsData as $clientData) {
             $client = new Client();
             $client->setTitle($clientData['title']);
             $manager->persist($client);
@@ -60,11 +60,11 @@ class AppFixtures extends Fixture
 
         //ajout des users
         /** @var ClientRepository */
-        $clientRepository = $manager->getRepository(Client::class); 
-        $userClient = $clientRepository->findOneBy(['id'=>'1']);
+        $clientRepository = $manager->getRepository(Client::class);
+        $userClient = $clientRepository->findOneBy(['id' => '1']);
 
-        $usersData=[];
-        $usersData=[
+        $usersData = [];
+        $usersData = [
             ['firstName' => 'John',
             'lastName' => 'Doe',
             'email' => 'JohnDoe@email.com',
@@ -75,7 +75,7 @@ class AppFixtures extends Fixture
             'client' => $userClient],
         ];
 
-        foreach ($usersData as $userData){
+        foreach ($usersData as $userData) {
             $user = new User();
             $user->setFirstName($userData['firstName'])
                 ->setLastName($userData['lastName'])

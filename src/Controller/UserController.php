@@ -20,23 +20,23 @@ class UserController extends AbstractController
      * @Route("/users/{id}", name="user_show", methods={"GET"})
      */
     public function showUser(User $user, SerializerInterface $serializer)
-    {       
-        return new JsonResponse($serializer->serialize($user, 'json'),200,[],true);
+    {
+        return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
     }
 
-    
+
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
     public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request)
     {
         $limit = $request->query->get('limit', 10);
-        $page=$request->query->get('page', 1);
+        $page = $request->query->get('page', 1);
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($userRepository->count([]) / $limit);
 
         $users = $userRepository->findBy([], ['id' => 'asc'], $limit, $offset);
-              
+
         $paginated = new PaginatedRepresentation(
             $users,
             'user_list',
@@ -46,26 +46,30 @@ class UserController extends AbstractController
             $numberOfPages
         );
 
-        return new JsonResponse($serializer->serialize($paginated, 'json'),200,[],true);
+        return new JsonResponse($serializer->serialize($paginated, 'json'), 200, [], true);
     }
 
     /**
      * @Route("/users", name="user_add", methods={"POST"})
      */
-    public function addUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager, ClientRepository $clientRepository)
-    {             
+    public function addUser(
+        SerializerInterface $serializer,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ClientRepository $clientRepository
+    ) {
         $data = [];
         $data = $serializer->deserialize($request->getContent(), 'array', 'json');
 
         $user = new User();
         $userForm = $this->createForm(UserFormType::class, $user);
         $userForm->submit($data);
-        
+
         //J'associe le client n°1 pour les tests
         //TODO : associer le client authentifié
         $user->setClient($clientRepository->find(1));
 
-        if ($userForm->isValid()){
+        if ($userForm->isValid()) {
             $entityManager->persist($user);
             $entityManager->flush();
         } else {
@@ -73,8 +77,7 @@ class UserController extends AbstractController
             die;
         }
 
-        return new JsonResponse($serializer->serialize($user, 'json'),201,[],true);
-
+        return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
     }
 
     /**
@@ -85,6 +88,6 @@ class UserController extends AbstractController
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return new JsonResponse('delete done',200,[],true);
+        return new JsonResponse('delete done', 200, [], true);
     }
-}    
+}
