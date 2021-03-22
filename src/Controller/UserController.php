@@ -37,7 +37,9 @@ class UserController extends AbstractController
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($userRepository->count([]) / $limit);
 
-        $users = $userRepository->findBy([], ['id' => 'asc'], $limit, $offset);
+        $client=$this->getUser();
+        
+        $users = $userRepository->findBy(['client' => $client], ['id' => 'asc'], $limit, $offset);
 
         $paginated = new PaginatedRepresentation(
             $users,
