@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
@@ -9,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hateoas\Representation\PaginatedRepresentation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use JMS\Serializer\SerializerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,9 +70,9 @@ class UserController extends AbstractController
         $user->setFirstName($data['first_name'])
             ->setLastName($data['last_name'])
             ->setEmail($data['email']);
-        //J'associe le client n°1 pour les tests
-        //TODO : associer le client authentifié
-        $user->setClient($clientRepository->find(1));
+
+        $client=$this->getUser()->getId();
+        $user->setClient($clientRepository->find($client));
 
         $violations = $validator->validate($user);
 
