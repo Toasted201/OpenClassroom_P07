@@ -7,9 +7,21 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
+    
+    protected $passwordEncoder;
+
+ 
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
+ 
+    
     public function load(ObjectManager $manager)
     {
 
@@ -51,7 +63,8 @@ class AppFixtures extends Fixture
 
         foreach ($clientsData as $clientData) {
             $client = new Client();
-            $client->setTitle($clientData['title']);
+            $client->setTitle($clientData['title'])
+                ->setPassword($this->passwordEncoder->encodePassword($client,'passpass'));
             $manager->persist($client);
         }
         $manager->flush();
