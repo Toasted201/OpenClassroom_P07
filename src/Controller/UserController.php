@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
@@ -10,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hateoas\Representation\PaginatedRepresentation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use JMS\Serializer\SerializerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,24 +19,36 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}", name="user_show", methods={"GET"})
      */
-    public function showUser(User $user, SerializerInterface $serializer)
+    public function showUser(User $user, SerializerInterface $serializer) : JsonResponse
     {
-        return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
+        $client = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse('', 404, [], true);
+        }
+
+        if ($client != $user->getClient()) {
+            return new JsonResponse('', 404, [], true);
+        }
+
+        if ($client = $user->getClient()) {
+            return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
+        }
     }
 
 
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request) : JsonResponse
+    public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request): JsonResponse
     {
         $limit = $request->query->getInt('limit', 10);
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * $limit;
         $numberOfPages = (int) ceil($userRepository->count([]) / $limit);
 
-        $client=$this->getUser();
-        
+        $client = $this->getUser();
+
         $users = $userRepository->findBy(['client' => $client], ['id' => 'asc'], $limit, $offset);
 
         $paginated = new PaginatedRepresentation(
@@ -62,8 +72,7 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         ClientRepository $clientRepository,
         ValidatorInterface $validator
-    ) : JsonResponse
-    {
+    ): JsonResponse {
         $data = [];
         $data = $serializer->deserialize($request->getContent(), 'array', 'json');
 
@@ -73,20 +82,20 @@ class UserController extends AbstractController
             ->setLastName($data['last_name'])
             ->setEmail($data['email']);
 
-        $client=$this->getUser()->getId();
+        $client = $this->getUser()->getId();
         $user->setClient($clientRepository->find($client));
 
         $violations = $validator->validate($user);
 
         if (count($violations) > 0) {
             $message = [];
-            foreach ($violations as $violation) {              
+            foreach ($violations as $violation) {
                 $message[] = sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
             }
             return new JsonResponse($serializer->serialize($message, 'json'), 422, [], true);
-        } 
-        
-        if (count($violations) == 0) {       
+        }
+
+        if (count($violations) == 0) {
             $entityManager->persist($user);
             $entityManager->flush();
             return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
@@ -96,11 +105,22 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}", name="user_delete", methods={"DELETE"})
      */
-    public function deleteUser(User $user, EntityManagerInterface $entityManager) : JsonResponse
+    public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
-        $entityManager->remove($user);
-        $entityManager->flush();
+        $client = $this->getUser();
 
-        return new JsonResponse('delete done', 200, [], true);
+        if (!$user) {
+            return new JsonResponse('', 404, [], true);
+        }
+
+        if ($client != $user->getClient()) {
+            return new JsonResponse('', 404, [], true);
+        }
+
+        if ($client = $user->getClient()) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            return new JsonResponse('', 204, [], true);
+        }
     }
 }
