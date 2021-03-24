@@ -11,32 +11,40 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
     /**
-     * @Route("/users/{id}", name="user_show", methods={"GET"})
+     * Throws an exception unless the attribute is granted against the current authentication token
+     * with an 404 error
+     *
+     * @throws AccessDeniedException
+     */
+    protected function denyAccessUnlessGranted(
+        $attribute,
+        $subject = null,
+        string $message = 'Resource Not Found'
+    ): void {
+        if (!$this->isGranted($attribute, $subject)) {
+            throw new NotFoundHttpException($message);
+        }
+    }
+
+    /**
+     * @Route("/users/{id}", name="user_show", methods={"GET"}, format="json")
      */
     public function showUser(User $user, SerializerInterface $serializer): JsonResponse
     {
-        $client = $this->getUser();
-
-
-
-        if ($client != $user->getClient()) {
-            return new JsonResponse('', 404, [], true);
-        }
-
-        if ($client = $user->getClient()) {
-            return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
-        }
+        $this->denyAccessUnlessGranted('link', $user);
+        return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
     }
 
 
     /**
-     * @Route("/users", name="user_list", methods={"GET"})
+     * @Route("/users", name="user_list", methods={"GET"}, format="json")
      */
     public function listUser(
         SerializerInterface $serializer,
@@ -49,7 +57,6 @@ class UserController extends AbstractController
         $numberOfPages = (int) ceil($userRepository->count([]) / $limit);
 
         $client = $this->getUser();
-
         $users = $userRepository->findBy(['client' => $client], ['id' => 'asc'], $limit, $offset);
 
         $paginated = new PaginatedRepresentation(
@@ -65,7 +72,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/users", name="user_add", methods={"POST"})
+     * @Route("/users", name="user_add", methods={"POST"}, format="json")
      */
     public function addUser(
         SerializerInterface $serializer,
@@ -95,22 +102,14 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/users/{id}", name="user_delete", methods={"DELETE"})
+     * @Route("/users/{id}", name="user_delete", methods={"DELETE"}, format="json")
      */
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
-        $client = $this->getUser();
+        $this->denyAccessUnlessGranted('link', $user);
 
-
-
-        if ($client != $user->getClient()) {
-            return new JsonResponse('', 404, [], true);
-        }
-
-        if ($client = $user->getClient()) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-            return new JsonResponse('', 204, [], true);
-        }
+        $entityManager->remove($user);
+        $entityManager->flush();
+        return new JsonResponse('', 204, [], true);
     }
 }
