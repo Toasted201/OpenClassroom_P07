@@ -19,13 +19,11 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}", name="user_show", methods={"GET"})
      */
-    public function showUser(User $user, SerializerInterface $serializer) : JsonResponse
+    public function showUser(User $user, SerializerInterface $serializer): JsonResponse
     {
         $client = $this->getUser();
 
-        if (!$user) {
-            return new JsonResponse('', 404, [], true);
-        }
+
 
         if ($client != $user->getClient()) {
             return new JsonResponse('', 404, [], true);
@@ -40,8 +38,11 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function listUser(SerializerInterface $serializer, UserRepository $userRepository, Request $request): JsonResponse
-    {
+    public function listUser(
+        SerializerInterface $serializer,
+        UserRepository $userRepository,
+        Request $request
+    ): JsonResponse {
         $limit = $request->query->getInt('limit', 10);
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * $limit;
@@ -70,7 +71,6 @@ class UserController extends AbstractController
         SerializerInterface $serializer,
         Request $request,
         EntityManagerInterface $entityManager,
-        ClientRepository $clientRepository,
         ValidatorInterface $validator
     ): JsonResponse {
         $data = [];
@@ -80,26 +80,18 @@ class UserController extends AbstractController
 
         $user->setFirstName($data['first_name'])
             ->setLastName($data['last_name'])
-            ->setEmail($data['email']);
-
-        $client = $this->getUser()->getId();
-        $user->setClient($clientRepository->find($client));
+            ->setEmail($data['email'])
+            ->setClient($this->getUser());
 
         $violations = $validator->validate($user);
 
         if (count($violations) > 0) {
-            $message = [];
-            foreach ($violations as $violation) {
-                $message[] = sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
-            }
-            return new JsonResponse($serializer->serialize($message, 'json'), 422, [], true);
+            return new JsonResponse($serializer->serialize($violations, 'json'), 422, [], true);
         }
 
-        if (count($violations) == 0) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-            return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
-        }
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new JsonResponse($serializer->serialize($user, 'json'), 201, [], true);
     }
 
     /**
@@ -109,9 +101,7 @@ class UserController extends AbstractController
     {
         $client = $this->getUser();
 
-        if (!$user) {
-            return new JsonResponse('', 404, [], true);
-        }
+
 
         if ($client != $user->getClient()) {
             return new JsonResponse('', 404, [], true);
