@@ -6,6 +6,8 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -18,6 +20,13 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          absolute = true
  *      )
  * )
+ * @Hateoas\Relation(
+ *      "list",
+ *      href = @Hateoas\Route(
+ *          "product_list",
+ *          absolute = true
+ *      )
+ * )
  */
 class Product
 {
@@ -25,24 +34,28 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @OA\Property(description="The unique identifier of the product.")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=30)
      * @Serializer\Expose
+     * @OA\Property(type="string", maxLength=30)
      */
     private $reference;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @OA\Property(type="string", maxLength=255)
      */
     private $designation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Serializer\Expose
+     * @OA\Property(type="string", maxLength=255)
      */
     private $brand;
 

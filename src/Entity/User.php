@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
 use Symfony\Component\Validator\Constraints as Assert;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -22,9 +24,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      )
  * )
  * @Hateoas\Relation(
+ *      "list",
+ *      href = @Hateoas\Route(
+ *          "user_list",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
+ * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
  *          "user_delete",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
+ * @Hateoas\Relation(
+ *      "add",
+ *      href = @Hateoas\Route(
+ *          "user_add",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *      )
@@ -36,6 +54,8 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
+     * @OA\Property(description="The unique identifier of the user.")
      */
     private $id;
 
@@ -47,6 +67,7 @@ class User
      *  min = 2,
      *  max = 255
      * )
+     * @OA\Property(type="string", maxLength=255)
      */
     private $firstName;
 
@@ -58,6 +79,7 @@ class User
      *  min = 2,
      *  max = 255
      * )
+     * @OA\Property(type="string", maxLength=255)
      */
     private $lastName;
 
@@ -66,12 +88,14 @@ class User
      * @Serializer\Expose
      * @Assert\NotBlank
      * @Assert\Email
+     * @OA\Property(type="string", format="email")
      */
     private $email;
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @OA\Property(ref=@Model(type=Client::class))
      */
     private $client;
 

@@ -20,5 +20,3 @@ phpcs.xml.dist
 ###< lexik/jwt-authentication-bundle ###
 jwt/config/private.pem
 jwt/config/public.pem
-
-README.md
