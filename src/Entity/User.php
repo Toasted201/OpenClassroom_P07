@@ -62,6 +62,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Length(
      *  min = 2,
@@ -74,6 +75,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Length(
      *  min = 2,
@@ -86,6 +88,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Email
      * @OA\Property(type="string", format="email")
