@@ -20,13 +20,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
  *          absolute = true
  *      )
  * )
- * @Hateoas\Relation(
- *      "list",
- *      href = @Hateoas\Route(
- *          "product_list",
- *          absolute = true
- *      )
- * )
  */
 class Product
 {

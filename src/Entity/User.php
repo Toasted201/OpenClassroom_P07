@@ -24,25 +24,9 @@ use Nelmio\ApiDocBundle\Annotation\Model;
  *      )
  * )
  * @Hateoas\Relation(
- *      "list",
- *      href = @Hateoas\Route(
- *          "user_list",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute = true
- *      )
- * )
- * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
  *          "user_delete",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute = true
- *      )
- * )
- * @Hateoas\Relation(
- *      "add",
- *      href = @Hateoas\Route(
- *          "user_add",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *      )
