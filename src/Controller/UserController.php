@@ -87,7 +87,8 @@ class UserController extends AbstractController
      *              @OA\Property(property="pages", type="integer"),
      *              @OA\Property(
      *                  property="_embedded",
-     *                  ref=@Model(type=User::class)),
+     *                  type="array",
+     *                  @OA\Items(ref=@Model(type=User::class))),
      *              @OA\Property(
      *                  property="_links",
      *                  @OA\Property(property="next", type="string"),
@@ -155,12 +156,12 @@ class UserController extends AbstractController
      *      summary="Creates a new user",
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref=@Model(type=User::class)))
+     *          @OA\JsonContent(ref=@Model(type=User::class, groups={"add_user"})))
      *      ),
      *      @OA\Response(
      *          response="201",
      *          description="A new user created.",
-     *          @OA\JsonContent(ref=@Model(type=User::class))
+     *          @OA\JsonContent(ref=@Model(type=User::class)))
      *      ),
      *      @OA\Response(
      *          response="401",

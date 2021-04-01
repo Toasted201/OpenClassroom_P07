@@ -24,25 +24,9 @@ use Nelmio\ApiDocBundle\Annotation\Model;
  *      )
  * )
  * @Hateoas\Relation(
- *      "list",
- *      href = @Hateoas\Route(
- *          "user_list",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute = true
- *      )
- * )
- * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
  *          "user_delete",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute = true
- *      )
- * )
- * @Hateoas\Relation(
- *      "add",
- *      href = @Hateoas\Route(
- *          "user_add",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *      )
@@ -62,6 +46,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Length(
      *  min = 2,
@@ -74,6 +59,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Length(
      *  min = 2,
@@ -86,6 +72,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
+     * @Serializer\Groups({"add_user"})
      * @Assert\NotBlank
      * @Assert\Email
      * @OA\Property(type="string", format="email")

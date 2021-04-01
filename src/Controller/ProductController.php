@@ -65,7 +65,8 @@ class ProductController extends AbstractController
      *              @OA\Property(property="pages", type="integer"),
      *              @OA\Property(
      *                  property="_embedded",
-     *                  ref=@Model(type=Product::class)),
+     *                  type="array",
+     *                  @OA\Items(ref=@Model(type=Product::class))),
      *              @OA\Property(
      *                  property="_links",
      *                  @OA\Property(property="next", type="string"),
