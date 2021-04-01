@@ -26,7 +26,7 @@ class UserController extends AbstractController
      *
      * @throws AccessDeniedException
      */
-    protected function denyAccessUnlessGranted(
+    protected function notFoundUnlessGranted(
         $attribute,
         $subject = null,
         string $message = 'Resource Not Found'
@@ -68,7 +68,7 @@ class UserController extends AbstractController
     **/
     public function showUser(User $user, SerializerInterface $serializer): JsonResponse
     {
-        $this->denyAccessUnlessGranted('link', $user);
+        $this->notFoundUnlessGranted('link', $user);
         return new JsonResponse($serializer->serialize($user, 'json'), 200, [], true);
     }
 
@@ -232,7 +232,7 @@ class UserController extends AbstractController
      */
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
-        $this->denyAccessUnlessGranted('link', $user);
+        $this->notFoundUnlessGranted('link', $user);
 
         $entityManager->remove($user);
         $entityManager->flush();

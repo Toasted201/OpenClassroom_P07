@@ -33,9 +33,6 @@ class Client implements UserInterface
      */
     private $password;
 
-    /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="client", orphanRemoval=true)
-     */
     private $users;
 
     public function __construct()
