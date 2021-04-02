@@ -8,3 +8,15 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+workspace.code-workspace
+phpcs.xml.dist
+
+###< lexik/jwt-authentication-bundle ###
+jwt/config/private.pem
+jwt/config/public.pem
