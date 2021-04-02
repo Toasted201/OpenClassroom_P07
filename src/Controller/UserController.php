@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Hateoas\Representation\CollectionRepresentation;
 use Hateoas\Representation\PaginatedRepresentation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use JMS\Serializer\SerializerInterface;
@@ -86,16 +87,21 @@ class UserController extends AbstractController
      *              @OA\Property(property="limit", type="integer"),
      *              @OA\Property(property="pages", type="integer"),
      *              @OA\Property(
-     *                  property="_embedded",
-     *                  type="array",
-     *                  @OA\Items(ref=@Model(type=User::class))),
-     *              @OA\Property(
      *                  property="_links",
-     *                  @OA\Property(property="next", type="string"),
+     *                  @OA\Property(property="self", type="string"),
      *                  @OA\Property(property="first", type="string"),
      *                  @OA\Property(property="last", type="string"),
+     *                  @OA\Property(property="next", type="string"),
      *                  @OA\Property(property="previous", type="string")
      *              ),
+     *              @OA\Property(
+     *                  property="_embedded",
+     *                  @OA\Property(
+     *                      property="items",
+     *                      type="array",
+     *                      @OA\Items(ref=@Model(type=User::class))
+     *                  )
+     *              )
      *          )
      *      ),
      *      @OA\Response(
@@ -138,7 +144,7 @@ class UserController extends AbstractController
         $users = $userRepository->findBy(['client' => $client], ['id' => 'asc'], $limit, $offset);
 
         $paginated = new PaginatedRepresentation(
-            $users,
+            new CollectionRepresentation($users),
             'user_list',
             [],
             $page,

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Hateoas\Representation\CollectionRepresentation;
 use Hateoas\Representation\PaginatedRepresentation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,16 +65,21 @@ class ProductController extends AbstractController
      *              @OA\Property(property="limit", type="integer"),
      *              @OA\Property(property="pages", type="integer"),
      *              @OA\Property(
-     *                  property="_embedded",
-     *                  type="array",
-     *                  @OA\Items(ref=@Model(type=Product::class))),
-     *              @OA\Property(
      *                  property="_links",
-     *                  @OA\Property(property="next", type="string"),
+     *                  @OA\Property(property="self", type="string"),
      *                  @OA\Property(property="first", type="string"),
      *                  @OA\Property(property="last", type="string"),
+     *                  @OA\Property(property="next", type="string"),
      *                  @OA\Property(property="previous", type="string")
      *              ),
+     *              @OA\Property(
+     *                  property="_embedded",
+     *                  @OA\Property(
+     *                      property="items",
+     *                      type="array",
+     *                      @OA\Items(ref=@Model(type=Product::class))
+     *                  )
+     *              )
      *          )
      *      ),
      *      @OA\Response(
@@ -115,7 +121,7 @@ class ProductController extends AbstractController
         $products = $productRepository->findBy([], ['id' => 'asc'], $limit, $offset);
 
         $paginated = new PaginatedRepresentation(
-            $products,
+            new CollectionRepresentation($products),
             'product_list',
             [],
             $page,
