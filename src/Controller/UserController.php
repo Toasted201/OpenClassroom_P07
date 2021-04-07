@@ -170,6 +170,10 @@ class UserController extends AbstractController
      *          @OA\JsonContent(ref=@Model(type=User::class)))
      *      ),
      *      @OA\Response(
+     *          response="422",
+     *          description="Validator violations, check your requestBody"
+     *      ),
+     *      @OA\Response(
      *          response="401",
      *          description="Access token is missing or invalid"
      *      ),
