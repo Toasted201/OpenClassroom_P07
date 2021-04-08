@@ -174,6 +174,10 @@ class UserController extends AbstractController
      *          description="Validator violations, check your requestBody"
      *      ),
      *      @OA\Response(
+     *          response="400",
+     *          description="Invalid synthaxe, check index's requestBody"
+     *      ),
+     *      @OA\Response(
      *          response="401",
      *          description="Access token is missing or invalid"
      *      ),
@@ -193,6 +197,15 @@ class UserController extends AbstractController
     ): JsonResponse {
         $data = [];
         $data = $serializer->deserialize($request->getContent(), 'array', 'json');
+
+
+        if (
+            !(array_key_exists('first_name', $data))
+            || !(array_key_exists('last_name', $data))
+            || !(array_key_exists('email', $data))
+        ) {
+            return new JsonResponse('Invalid synthaxe', 400, [], true);
+        }
 
         $user = new User();
 
