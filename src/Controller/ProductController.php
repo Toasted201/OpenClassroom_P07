@@ -34,7 +34,7 @@ class ProductController extends AbstractController
      *      ),
      *      @OA\Response(
      *          response="404",
-     *          description="No product found, check your parameters or Access token"
+     *          description="No product found, check your parameters"
      *      ),
      *      @OA\Parameter(
      *          name="id",
@@ -88,7 +88,7 @@ class ProductController extends AbstractController
      *      ),
      *      @OA\Response(
      *          response="404",
-     *          description="No product found, check your parameters or Access token "
+     *          description="No product found, check your parameters"
      *      ),
      *      @OA\Parameter(
      *          name="limit",

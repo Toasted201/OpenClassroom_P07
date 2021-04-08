@@ -63,6 +63,7 @@ composer run-script prepare-db --dev
 pseudo : BestOfTel 
 mot de passe : passpass
 
+- \doc pour accéder à la documentation
 
 ### Paramétrage
 

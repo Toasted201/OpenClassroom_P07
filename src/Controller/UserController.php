@@ -179,7 +179,7 @@ class UserController extends AbstractController
      *      ),
      *      @OA\Response(
      *          response="404",
-     *          description="No user found, check your parameters or Access token"
+     *          description="No user found, check your parameters"
      *      )
      *)
      * @OA\Tag(name="users")
