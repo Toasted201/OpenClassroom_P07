@@ -91,6 +91,7 @@ Configuer lexik/jwt-authentication-bundle :
 
 ## Versions
 - V1.0.0 : First Version
+- V1.0.1 : Add error's informations
 
 
 ## CodeClimate
